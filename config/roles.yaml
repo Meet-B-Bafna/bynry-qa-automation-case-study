@@ -1,0 +1,24 @@
+# Permission matrix used to drive data-driven role tests.
+# "allowed" actions render their UI control and succeed via API;
+# anything not listed is assumed denied by default (fail closed).
+admin:
+  can:
+    - create_project
+    - delete_project
+    - invite_team_member
+    - remove_team_member
+    - manage_billing
+    - view_all_projects
+
+manager:
+  can:
+    - create_project
+    - invite_team_member
+    - remove_team_member
+    - view_all_projects
+    # notably cannot: delete_project, manage_billing
+
+employee:
+  can:
+    - view_assigned_projects
+    # notably cannot: create_project, invite_team_member, manage_billing

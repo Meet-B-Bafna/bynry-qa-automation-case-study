@@ -1,0 +1,66 @@
+name: QA Automation Suite
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 3 * * *"   # nightly full matrix run
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: playwright install --with-deps chromium
+      - run: pytest -m smoke --env=company1 -n2
+        env:
+          WFP_TEST_PASSWORD: ${{ secrets.WFP_TEST_PASSWORD }}
+          WFP_TEST_OTP: ${{ secrets.WFP_TEST_OTP }}
+          WFP_TOKEN_COMPANY1: ${{ secrets.WFP_TOKEN_COMPANY1 }}
+          WFP_TOKEN_COMPANY2: ${{ secrets.WFP_TOKEN_COMPANY2 }}
+
+  full-suite:
+    # Full cross-browser + API + integration matrix, gated to main/nightly
+    # only -- keeps PR feedback fast and BrowserStack usage/cost bounded.
+    if: github.ref == 'refs/heads/main' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: playwright install --with-deps ${{ matrix.browser }}
+      - run: pytest tests/ui tests/api tests/integration --env=company1 -n4 --alluredir=reports/allure-results
+        env:
+          WFP_TEST_PASSWORD: ${{ secrets.WFP_TEST_PASSWORD }}
+          WFP_TEST_OTP: ${{ secrets.WFP_TEST_OTP }}
+          WFP_TOKEN_COMPANY1: ${{ secrets.WFP_TOKEN_COMPANY1 }}
+          WFP_TOKEN_COMPANY2: ${{ secrets.WFP_TOKEN_COMPANY2 }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results-${{ matrix.browser }}
+          path: reports/allure-results
+
+  mobile:
+    if: github.ref == 'refs/heads/main' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: pytest tests/mobile --env=company1
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}

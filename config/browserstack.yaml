@@ -1,0 +1,22 @@
+# BrowserStack capability matrix. Referenced by device_profile name from
+# src/mobile/browserstack_driver.py. Credentials are injected from env vars,
+# never hardcoded here.
+hub_url: https://hub-cloud.browserstack.com/wd/hub
+
+capabilities:
+  android_pixel_7:
+    platformName: android
+    deviceName: "Google Pixel 7"
+    osVersion: "13.0"
+    browserName: chrome     # mobile web; drop this + add "app" key for native
+
+  ios_iphone_14:
+    platformName: ios
+    deviceName: "iPhone 14"
+    osVersion: "16"
+    browserName: safari
+
+desktop_matrix:
+  - browser: chromium
+  - browser: firefox
+  - browser: webkit   # stand-in for Safari in Playwright

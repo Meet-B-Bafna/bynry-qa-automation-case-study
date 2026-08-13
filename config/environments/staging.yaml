@@ -1,0 +1,7 @@
+tenant_id: staging-shared
+display_name: "Shared Staging (smoke checks only)"
+base_url: https://staging.workflowpro.com
+api_url: https://api-staging.workflowpro.com/v1
+default_role: admin
+accounts:
+  admin: admin@staging.workflowpro.com

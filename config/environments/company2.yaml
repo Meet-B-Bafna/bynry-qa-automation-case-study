@@ -1,0 +1,9 @@
+tenant_id: company2
+display_name: "Company2 (Staging)"
+base_url: https://company2.workflowpro.com
+api_url: https://api.workflowpro.com/v1
+default_role: admin
+accounts:
+  admin: admin@company2.com
+  manager: manager@company2.com
+  employee: employee@company2.com

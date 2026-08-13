@@ -1,0 +1,9 @@
+pytest==8.3.3
+pytest-xdist==3.6.1
+pytest-rerunfailures==14.0
+playwright==1.47.0
+requests==2.32.3
+PyYAML==6.0.2
+Appium-Python-Client==4.3.0
+allure-pytest==2.13.5
+python-dotenv==1.0.1
